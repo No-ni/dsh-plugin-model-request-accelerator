@@ -6,7 +6,7 @@
 
 import assert from "node:assert/strict";
 import test from "node:test";
-import { headersMatch, isShapeRejection, messagesPrefixEnd, moveMessagesLast, prewarmPrefix } from "../lib/prewarm.js";
+import { choosePrewarmMember, headersMatch, isShapeRejection, messagesPrefixEnd, moveMessagesLast, prewarmPrefix, staleClaimMs } from "../lib/prewarm.js";
 
 /** One OpenAI-compatible body with a two-message history and trailing fields. */
 const BODY = JSON.stringify({
@@ -114,4 +114,23 @@ test("moves whichever field carries the conversation to the end", () => {
 	// Already last, or no conversation at all: nothing to do.
 	assert.equal(moveMessagesLast(JSON.stringify({ model: "m", input: [] })), undefined);
 	assert.equal(moveMessagesLast(JSON.stringify({ model: "m", stream: true })), undefined);
+});
+
+test("a member that has sat idle past its stale bound is not claimed", () => {
+	const prefix = prewarmPrefix(BODY);
+	const url = "https://gateway.example/v1/chat/completions";
+	const member = { url, prefix, headers: {}, settled: false, lastWriteAt: 0 };
+	const fresh = choosePrewarmMember([member], { url, body: BODY, headers: {}, now: 30_000, staleMs: 60_000 });
+	assert.equal(fresh.member, member, "inside the bound the member is still claimable");
+	assert.equal(fresh.staleIdleMs, 0, "nothing stale was seen");
+
+	const stale = choosePrewarmMember([member], { url, body: BODY, headers: {}, now: 90_000, staleMs: 60_000 });
+	assert.equal(stale.member, undefined, "past the bound it is not claimed");
+	assert.equal(stale.staleIdleMs, 90_000, "the age it reached is reported");
+});
+
+test("the stale bound is half the hold window, capped at a minute", () => {
+	assert.equal(staleClaimMs(120_000), 60_000, "the shipped default lands on a minute");
+	assert.equal(staleClaimMs(30_000), 15_000, "a short window halves with it");
+	assert.equal(staleClaimMs(600_000), 60_000, "and it never exceeds a minute");
 });

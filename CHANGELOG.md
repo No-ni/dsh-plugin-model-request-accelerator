@@ -4,6 +4,17 @@ Three-part versions. The panel's **检查更新** button compares the installed
 `package.json` with the one on `main`, so an entry here is worth a release only when
 something a user can see has changed.
 
+## 2.2.6
+
+- **A held member is no longer claimed once it has sat idle for half its hold window,
+  capped at a minute.** Past that age a gateway is close to abandoning the half-written
+  body, and the increment then blocks until TCP gives up: a real deployment showed 3-5 ms
+  sends on a fresh member and up to 129 s on a stale one. The request now goes out
+  normally instead, and the row reports `stale` as the reason.
+- **The h2 transport keeps two connections per origin rather than one**, so a request
+  waiting on a model does not share a TCP connection with held members the far end may
+  abandon.
+
 ## 2.2.5
 
 - **The installer works out which profile to use.** `web` when it is the only

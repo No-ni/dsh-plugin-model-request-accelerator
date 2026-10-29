@@ -63,11 +63,12 @@ It sends a one-token request rather than a real conversation.
 
 - Each conversation holds `prewarmPoolSize` members (default `2`), opened at staggered moments and **advanced as content becomes known**, so the member that gets consumed has been in flight for several steps rather than one.
 - A step claims the member whose bytes it continues **furthest** and whose headers still match. The deepest match leaves the least to write. Survivors are advanced and the pool refilled.
+- A member that would have matched but has sat untouched for longer than **half its hold window, and never more than a minute**, is not claimed at all — the row reports `stale` instead. Its stream is the one a gateway abandons first, and writing the increment onto an abandoned stream costs seconds rather than milliseconds.
 - A step that **ends the turn** (`stop`, `max-tokens`, an error, an interruption) rather than continuing with `tool-calls` leaves the pool exactly where it is — a finished turn is usually a pause, and the next question repeats the same history.
 - `prewarmHoldMs` (default `120000`) measures **idleness**, and restarts on every advance. A member expires only after that long with nothing happening.
 - The pool belongs to one **agent**, not to a session tree. A subagent has its own session id and therefore its own pool, so a child's pool never mixes with its parent's.
 - The one thing shared between agents is the decision to stop pre-transmitting to an **endpoint**, because whether it accepts a chunked body is a property of the endpoint rather than of the conversation asking.
-- Held requests are always closed properly: a consumed member has its increment written and its body closed, after which undici returns the socket to its keep-alive pool. An abandoned member is aborted by whatever abandoned it — the hold timer, a mismatch, a refused body, the pool being released, or the plugin unloading.
+- Held requests are always closed properly: a consumed member has its increment written and its body closed, after which undici returns the socket to its keep-alive pool. An abandoned member is aborted by whatever abandoned it — the hold timer, a stale or mismatched member, a refused body, the pool being released, or the plugin unloading.
 
 **Reading the result.** A pre-transmitted row carries a **预热** chip. Hover it for the pre-sent bytes, the increment, and how long the member was held — that last number is the lead time actually won, and it is the honest way to judge whether a larger pool is worth anything on your link.
 
