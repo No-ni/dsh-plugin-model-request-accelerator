@@ -11,7 +11,7 @@
 #
 # Environment overrides:
 #   DSH_HOME     DSH home directory       (default: $HOME/.dsh)
-#   DSH_PROFILE  profile to install into  (default: web)
+#   DSH_PROFILE  profile to install into  (default: the only one of web/desktop present)
 
 set -eu
 
@@ -19,13 +19,31 @@ REPO_URL="https://github.com/No-ni/dsh-plugin-model-request-accelerator.git"
 PLUGIN_ID="model-request-accelerator"
 
 DSH_HOME="${DSH_HOME:-$HOME/.dsh}"
-DSH_PROFILE="${DSH_PROFILE:-web}"
-PROFILE_DIR="$DSH_HOME/profiles/$DSH_PROFILE"
-PATCH_FILE="$PROFILE_DIR/cordis.patch.yml"
-TARGET_DIR="$PROFILE_DIR/plugins/$PLUGIN_ID"
+PROFILES_DIR="$DSH_HOME/profiles"
 
 say() { printf '%s\n' "$*"; }
 die() { printf 'error: %s\n' "$*" >&2; exit 1; }
+
+# Which profile to install into. A DSH install keeps one profile per front end: the
+# browser build uses "web", the desktop app uses "desktop". Choosing the only one that
+# exists is worth doing, because the documented one-liner has to work for both. Choosing
+# between two is not, because that would silently install into the wrong one.
+if [ -z "${DSH_PROFILE:-}" ]; then
+	if [ -d "$PROFILES_DIR/web" ] && [ -d "$PROFILES_DIR/desktop" ]; then
+		die "both web and desktop profiles exist under $PROFILES_DIR; set DSH_PROFILE=web or DSH_PROFILE=desktop"
+	elif [ -d "$PROFILES_DIR/web" ]; then
+		DSH_PROFILE=web
+	elif [ -d "$PROFILES_DIR/desktop" ]; then
+		DSH_PROFILE=desktop
+	else
+		die "no dsh profile found under $PROFILES_DIR (looked for web, then desktop); set DSH_HOME and DSH_PROFILE"
+	fi
+	say "==> using the \"$DSH_PROFILE\" profile (set DSH_PROFILE to override)"
+fi
+
+PROFILE_DIR="$PROFILES_DIR/$DSH_PROFILE"
+PATCH_FILE="$PROFILE_DIR/cordis.patch.yml"
+TARGET_DIR="$PROFILE_DIR/plugins/$PLUGIN_ID"
 
 [ -d "$PROFILE_DIR" ] || die "no profile \"$DSH_PROFILE\" at $PROFILE_DIR (set DSH_HOME / DSH_PROFILE?)"
 [ -f "$PROFILE_DIR/package.json" ] || die "$PROFILE_DIR is not a dsh profile (no package.json)"
@@ -114,8 +132,9 @@ if [ -f "$TARGET_DIR/scripts/migrate-legacy-settings.mjs" ]; then
 	node "$TARGET_DIR/scripts/migrate-legacy-settings.mjs" --as-command \
 		--dsh-home "$DSH_HOME" --profile "$DSH_PROFILE" --plugin-id "$PLUGIN_ID" || migrated=$?
 	if [ "$migrated" = "1" ]; then
-		say "==> could not migrate settings from an older version; your settings are unchanged,"
+		say "==> no settings were carried over from an older version; your settings are unchanged,"
 		say "    and the settings page will show this plugin's defaults."
+		say "    (A fresh install has nothing to carry over, so this is expected.)"
 	fi
 fi
 

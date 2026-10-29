@@ -4,6 +4,14 @@ Three-part versions. The panel's **检查更新** button compares the installed
 `package.json` with the one on `main`, so an entry here is worth a release only when
 something a user can see has changed.
 
+## 2.2.5
+
+- **The installer works out which profile to use.** `web` when it is the only
+  profile, `desktop` when that is the only one; both existing is an error rather
+  than a guess, so the documented one-liner cannot land in the wrong profile.
+  The READMEs gain a DSH NEXT section, and the settings carry-over reports a
+  missing `yaml` module as a note instead of an error on a fresh install.
+
 ## 2.2.4
 
 - **The default pre-transmission pool is 2 members instead of 3.**

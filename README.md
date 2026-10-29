@@ -38,7 +38,7 @@ Measured on a real session: a **3.8 MB** request body became **1.46 MB**, with a
 
 ## Requirements
 
-- DeepSeek Harness, with a profile that has a browser UI (the `web` profile ships one).
+- DeepSeek Harness, with a profile that has a browser UI (`web` for the browser build, `desktop` for the DSH NEXT desktop app).
 - Node.js >= 20. The one bundled with DSH is fine.
 
 ## Install
@@ -47,13 +47,35 @@ Measured on a real session: a **3.8 MB** request body became **1.46 MB**, with a
 curl -fsSL https://raw.githubusercontent.com/No-ni/dsh-plugin-model-request-accelerator/main/install.sh | sh
 ```
 
-That clones the plugin into `$DSH_HOME/profiles/web/plugins/model-request-accelerator` and registers it in the profile's `cordis.patch.yml`. It is safe to re-run — it fast-forwards an existing checkout, leaves an existing entry alone, and **never overwrites settings you have changed**. For another profile or DSH home:
+The script works out the profile itself: `web` when that is the only profile, `desktop`
+when that is the only one, and it stops rather than guess when both exist. It clones the
+plugin into `$DSH_HOME/profiles/<profile>/plugins/model-request-accelerator` and
+registers it in that profile's `cordis.patch.yml`. It is safe to re-run — it
+fast-forwards an existing checkout, leaves an existing entry alone, and **never
+overwrites settings you have changed**.
+
+Name the profile when there is more than one, or when the DSH home is not `~/.dsh`:
 
 ```bash
-DSH_HOME=~/.dsh DSH_PROFILE=web sh install.sh
+DSH_PROFILE=desktop sh install.sh
+DSH_HOME=/opt/dsh DSH_PROFILE=web sh install.sh
 ```
 
-Then **reload the browser tab** (the settings page is part of the page's module graph, so an open tab will not have it) and open **Settings → 模型请求加速**.
+### DSH NEXT (desktop app)
+
+The desktop app keeps its plugins in the `desktop` profile. Both profiles usually exist
+on such a machine, so name it:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/No-ni/dsh-plugin-model-request-accelerator/main/install.sh | DSH_PROFILE=desktop sh
+```
+
+The app can also install it from its own page, which is the route its package manager
+understands and the one that brings the settings card with it: **Settings → Plugins**,
+then `No-ni/dsh-plugin-model-request-accelerator` in the package-or-source field, and
+confirm the install it offers.
+
+Then load it once more — **reload the browser tab**, or quit and reopen the desktop app — and open **Settings → 模型请求加速**. The settings page arrives with the page's module graph, so a tab that is already open will not have it.
 
 <details>
 <summary>Manual install</summary>
@@ -62,14 +84,14 @@ Then **reload the browser tab** (the settings page is part of the page's module 
 
 ```bash
 git clone https://github.com/No-ni/dsh-plugin-model-request-accelerator.git \
-  "${DSH_HOME:-$HOME/.dsh}/profiles/web/plugins/model-request-accelerator"
+  "${DSH_HOME:-$HOME/.dsh}/profiles/${DSH_PROFILE:-web}/plugins/model-request-accelerator"
 ```
 
 No dependency install is usually needed: Node walks up from the plugin directory into the profile's own `node_modules`, where DSH's packages already live. If your layout differs, run `npm install --omit=dev` in the cloned directory.
 
 **2. Register it**
 
-Append to `${DSH_HOME:-$HOME/.dsh}/profiles/web/cordis.patch.yml`, which is a top-level YAML array:
+Append to `${DSH_HOME:-$HOME/.dsh}/profiles/${DSH_PROFILE:-web}/cordis.patch.yml`, which is a top-level YAML array:
 
 ```yaml
 - insert:

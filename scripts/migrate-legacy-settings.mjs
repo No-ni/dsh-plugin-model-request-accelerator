@@ -293,7 +293,7 @@ export async function migrate(options) {
 
 	const yaml = loadYaml(profileDir);
 	if (yaml === undefined) {
-		return { code: FAILED, reason: "could not load the `yaml` module, which this needs to read and rewrite the patch file" };
+		return { code: FAILED, soft: true, reason: "this profile has no `yaml` module, so the settings carry-over was skipped and nothing was changed" };
 	}
 
 	const keys = await acceptedKeys();
@@ -370,6 +370,8 @@ if (invokedByName || process.argv.includes("--as-command")) {
 		if (result.dryRun) process.stdout.write(`${result.text}\n`);
 	} else if (result.code === NOTHING_TO_DO) {
 		process.stdout.write(`==> no settings to migrate: ${result.reason}\n`);
+	} else if (result.soft === true) {
+		process.stdout.write(`note: ${result.reason}\n`);
 	} else {
 		process.stderr.write(`error: ${result.reason}\n`);
 	}

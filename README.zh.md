@@ -38,7 +38,7 @@
 
 ## 环境要求
 
-- DeepSeek Harness，且所用 profile 带浏览器界面（`web` profile 自带）。
+- DeepSeek Harness，且所用 profile 带浏览器界面（浏览器版是 `web`，DSH NEXT 桌面版是 `desktop`）。
 - Node.js >= 20。DSH 自带的那份即可。
 
 ## 安装
@@ -47,13 +47,26 @@
 curl -fsSL https://raw.githubusercontent.com/No-ni/dsh-plugin-model-request-accelerator/main/install.sh | sh
 ```
 
-它会把插件克隆到 `$DSH_HOME/profiles/web/plugins/model-request-accelerator` 并注册进该 profile 的 `cordis.patch.yml`。**可以反复运行**——它会 fast-forward 已有 checkout、保留已注册的条目，并且**绝不覆盖你改过的设置**。换 profile 或换 DSH home：
+脚本会自己判断装进哪个 profile：只有 `web` 就用 `web`，只有 `desktop` 就用 `desktop`；两个都存在时它会停下让你指定，而不是替你猜。它会把插件克隆到 `$DSH_HOME/profiles/<profile>/plugins/model-request-accelerator`，并注册进该 profile 的 `cordis.patch.yml`。**可以反复运行**——它会 fast-forward 已有 checkout、保留已注册的条目，并且**绝不覆盖你改过的设置**。
+
+有多个 profile，或者 DSH home 不在 `~/.dsh` 时，显式指定：
 
 ```bash
-DSH_HOME=~/.dsh DSH_PROFILE=web sh install.sh
+DSH_PROFILE=desktop sh install.sh
+DSH_HOME=/opt/dsh DSH_PROFILE=web sh install.sh
 ```
 
-然后**刷新浏览器标签页**（设置页属于页面的模块图，安装时已开着的标签页不会有它），打开 **设置 → 模型请求加速**。
+### DSH NEXT（桌面版）
+
+桌面版把插件放在 `desktop` profile 里。这类机器通常两个 profile 都在，所以要指名：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/No-ni/dsh-plugin-model-request-accelerator/main/install.sh | DSH_PROFILE=desktop sh
+```
+
+桌面版也可以在它自己的界面里装，这是它包管理器认的方式，设置卡片也才会一起出现：**设置 → 插件**，在包名或自定义安装源输入框里填 `No-ni/dsh-plugin-model-request-accelerator`，然后确认它给出的安装。
+
+然后重新加载一次——**刷新浏览器标签页**，桌面版则退出重开——再打开 **设置 → 模型请求加速**。设置页属于页面的模块图，安装时已开着的标签页不会有它。
 
 <details>
 <summary>手动安装</summary>
@@ -62,14 +75,14 @@ DSH_HOME=~/.dsh DSH_PROFILE=web sh install.sh
 
 ```bash
 git clone https://github.com/No-ni/dsh-plugin-model-request-accelerator.git \
-  "${DSH_HOME:-$HOME/.dsh}/profiles/web/plugins/model-request-accelerator"
+  "${DSH_HOME:-$HOME/.dsh}/profiles/${DSH_PROFILE:-web}/plugins/model-request-accelerator"
 ```
 
 通常不需要单独装依赖：Node 会从插件目录向上找到 profile 自己的 `node_modules`，DSH 的包就在那里。如果你的布局不是这样，在克隆目录里跑 `npm install --omit=dev`。
 
 **2. 注册它**
 
-往 `${DSH_HOME:-$HOME/.dsh}/profiles/web/cordis.patch.yml` 追加（它是一个顶层 YAML 数组）：
+往 `${DSH_HOME:-$HOME/.dsh}/profiles/${DSH_PROFILE:-web}/cordis.patch.yml` 追加（它是一个顶层 YAML 数组）：
 
 ```yaml
 - insert:
