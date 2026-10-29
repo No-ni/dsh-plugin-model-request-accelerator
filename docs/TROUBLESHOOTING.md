@@ -65,7 +65,7 @@ Check the 预热 chip's tooltip on a row that did use it. If the pool keeps bein
 
 **Symptom: held requests are visible as open connections.**
 
-That is what the feature does. A conversation keeps `prewarmPoolSize` requests held (default `3`), and they expire after `prewarmHoldMs` of **idleness** (default `120000`, two minutes) — the timer restarts every time a member is advanced. Nothing reconnects while a conversation sits idle, because members are only opened by a captured request. Reducing `prewarmPoolSize` to `1` is the smallest useful pool.
+That is what the feature does. A conversation keeps `prewarmPoolSize` requests held (default `2`), and they expire after `prewarmHoldMs` of **idleness** (default `120000`, two minutes) — the timer restarts every time a member is advanced. Nothing reconnects while a conversation sits idle, because members are only opened by a captured request. Reducing `prewarmPoolSize` to `1` is the smallest useful pool.
 
 ## HTTP/2
 

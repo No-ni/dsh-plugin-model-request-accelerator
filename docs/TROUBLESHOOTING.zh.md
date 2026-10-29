@@ -65,7 +65,7 @@ model-request-accelerator: sg request compressed 3813841 -> 1461179 bytes
 
 **症状：能看到被持有的连接一直开着。**
 
-这正是该特性的形态。一个对话会持有 `prewarmPoolSize` 个请求（默认 `3`），它们在**空闲** `prewarmHoldMs`（默认 `120000`，两分钟）后过期——每次推进都会重置计时器。对话闲置时不会有任何重连，因为成员只由被捕获的请求打开。把 `prewarmPoolSize` 降到 `1` 就是最小可用的池。
+这正是该特性的形态。一个对话会持有 `prewarmPoolSize` 个请求（默认 `2`），它们在**空闲** `prewarmHoldMs`（默认 `120000`，两分钟）后过期——每次推进都会重置计时器。对话闲置时不会有任何重连，因为成员只由被捕获的请求打开。把 `prewarmPoolSize` 降到 `1` 就是最小可用的池。
 
 ## HTTP/2
 

@@ -82,7 +82,7 @@ A single failure is retried once on a fresh connection before the origin is cond
 
 ## The pre-transmission pool
 
-Each conversation holds `prewarmPoolSize` members (default `3`). Members are opened at staggered moments and **advanced as content becomes known**, so the one that gets consumed has already been in flight for several steps rather than one.
+Each conversation holds `prewarmPoolSize` members (default `2`). Members are opened at staggered moments and **advanced as content becomes known**, so the one that gets consumed has already been in flight for several steps rather than one.
 
 - **Open** — a model call goes out and its history is therefore known; every member is advanced to it and the pool is refilled. The bytes are slices of the request that was just captured, never reconstructed.
 - **Reorder** — see below.

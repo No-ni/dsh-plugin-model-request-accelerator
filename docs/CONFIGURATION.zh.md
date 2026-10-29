@@ -61,7 +61,7 @@ node scripts/probe-encodings.mjs https://your-gateway.example/v1
 
 **池的行为。**
 
-- 每个对话持有 `prewarmPoolSize` 个成员（默认 `3`），在错开的时刻打开，并**随着内容变得已知而推进**，因此最终被消费的那个已经在线路上待了好几步，而不是一步。
+- 每个对话持有 `prewarmPoolSize` 个成员（默认 `2`），在错开的时刻打开，并**随着内容变得已知而推进**，因此最终被消费的那个已经在线路上待了好几步，而不是一步。
 - 每一步认领那个它的字节**延续得最远**、且头部仍然匹配的成员。匹配越深，剩下要写越少。幸存者被推进，池被补满。
 - 结束这一轮的步骤（`stop`、`max-tokens`、报错、被打断）而不是以 `tool-calls` 继续时，池**原地不动**——一轮结束通常只是暂停，下一个问题会重复同一份历史。
 - `prewarmHoldMs`（默认 `120000`）衡量的是**空闲**，每次推进都重置。成员只有在这么长时间内什么都没发生才会过期。
@@ -143,7 +143,7 @@ stream begins ──▶ fetch() ──────▶ body sent ─────�
             prewarm: true
         encoding: auto
         prewarmHoldMs: 120000
-        prewarmPoolSize: 3
+        prewarmPoolSize: 2
         http2: true
         allowInsecureH2c: false
         timing: true
@@ -158,7 +158,7 @@ stream begins ──▶ fetch() ──────▶ body sent ─────�
 | `providers.<name>.encoding` | `auto` \| `gzip` | 继承 `encoding` | 该提供方的算法。 |
 | `encoding` | `auto` \| `gzip` | `auto` | 全局默认。`auto` 优先 brotli、退回 gzip。 |
 | `prewarmHoldMs` | number ≥ 1000 | `120000` | 被持有的请求空闲多久后被放弃。 |
-| `prewarmPoolSize` | number ≥ 1 | `3` | 每个对话持有多少个请求。 |
+| `prewarmPoolSize` | number ≥ 1 | `2` | 每个对话持有多少个请求。 |
 | `http2` | boolean | `true` | HTTP/2 的全局总开关。 |
 | `allowInsecureH2c` | boolean | `false` | 让 `http://` 的 endpoint 也用 HTTP/2，无证书。 |
 | `timing` | boolean | `true` | 记录请求耗时并提供耗时视图。 |

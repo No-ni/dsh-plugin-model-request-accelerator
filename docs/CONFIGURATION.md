@@ -61,7 +61,7 @@ It sends a one-token request rather than a real conversation.
 
 **How the pool behaves.**
 
-- Each conversation holds `prewarmPoolSize` members (default `3`), opened at staggered moments and **advanced as content becomes known**, so the member that gets consumed has been in flight for several steps rather than one.
+- Each conversation holds `prewarmPoolSize` members (default `2`), opened at staggered moments and **advanced as content becomes known**, so the member that gets consumed has been in flight for several steps rather than one.
 - A step claims the member whose bytes it continues **furthest** and whose headers still match. The deepest match leaves the least to write. Survivors are advanced and the pool refilled.
 - A step that **ends the turn** (`stop`, `max-tokens`, an error, an interruption) rather than continuing with `tool-calls` leaves the pool exactly where it is — a finished turn is usually a pause, and the next question repeats the same history.
 - `prewarmHoldMs` (default `120000`) measures **idleness**, and restarts on every advance. A member expires only after that long with nothing happening.
@@ -143,7 +143,7 @@ Settings are the loader row's `config`. The page writes it for you, and the Host
             prewarm: true
         encoding: auto
         prewarmHoldMs: 120000
-        prewarmPoolSize: 3
+        prewarmPoolSize: 2
         http2: true
         allowInsecureH2c: false
         timing: true
@@ -158,7 +158,7 @@ Settings are the loader row's `config`. The page writes it for you, and the Host
 | `providers.<name>.encoding` | `auto` \| `gzip` | inherits `encoding` | Algorithm for this provider. |
 | `encoding` | `auto` \| `gzip` | `auto` | Section default. `auto` prefers brotli and falls back to gzip. |
 | `prewarmHoldMs` | number ≥ 1000 | `120000` | How long a held request may sit idle before it is abandoned. |
-| `prewarmPoolSize` | number ≥ 1 | `3` | How many held requests one conversation keeps. |
+| `prewarmPoolSize` | number ≥ 1 | `2` | How many held requests one conversation keeps. |
 | `http2` | boolean | `true` | Plugin-wide kill switch for HTTP/2. |
 | `allowInsecureH2c` | boolean | `false` | Also use HTTP/2 for `http://` endpoints, with no certificate. |
 | `timing` | boolean | `true` | Record request timings and offer the timing view. |

@@ -114,7 +114,7 @@ If you prefer a file, these are the same settings — the loader row's `config`,
             prewarm: true
         encoding: auto
         prewarmHoldMs: 120000
-        prewarmPoolSize: 3
+        prewarmPoolSize: 2
         http2: true
         allowInsecureH2c: false
         timing: true

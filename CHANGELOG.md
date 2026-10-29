@@ -4,6 +4,13 @@ Three-part versions. The panel's **检查更新** button compares the installed
 `package.json` with the one on `main`, so an entry here is worth a release only when
 something a user can see has changed.
 
+## 2.2.4
+
+- **The default pre-transmission pool is 2 members instead of 3.**
+  One conversation keeps fewer requests held open, which leaves more room at the
+  gateway for the requests that actually need a response. A deployment that wants
+  the old depth sets `prewarmPoolSize: 3`.
+
 ## 2.2.3
 
 - The manifest points `repository`, `bugs` and `homepage` at this repository, so
