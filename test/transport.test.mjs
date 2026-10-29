@@ -443,3 +443,17 @@ test('a held member opened without a protocol callback does not throw', async ()
 	assert.equal(fake.calls.length, 1);
 });
 
+
+test("a held member is opened on a connection pool of its own", async () => {
+	const fake = fakePair();
+	const transport = createTransport({ load: () => fake.pair });
+	const url = "https://gw.example/v1/chat/completions";
+	const init = { method: "POST", body: "x" };
+	await transport.execute(url, init, { pool: "held" });
+	await transport.execute(url, init, {});
+	assert.equal(fake.agents.length, 2, "two pools, so a held body cannot queue ahead of a real request");
+	assert.equal(fake.agents[0].options.connections, 1, "the held pool only needs one connection");
+	assert.equal(fake.agents[1].options.connections, 2, "the request pool keeps two");
+	await transport.execute(url, init, { pool: "held" });
+	assert.equal(fake.agents.length, 2, "and each class keeps reusing its own");
+});

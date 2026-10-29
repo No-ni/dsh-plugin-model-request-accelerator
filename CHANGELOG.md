@@ -4,6 +4,14 @@ Three-part versions. The panel's **检查更新** button compares the installed
 `package.json` with the one on `main`, so an entry here is worth a release only when
 something a user can see has changed.
 
+## 2.2.8
+
+- **Held members get their own connection pool.** A request reached the gateway 61 s
+  after the plugin handed it over, while the gateway answered in 16 s: its bytes were
+  queued behind the half-written bodies of pooled members sharing one TCP connection.
+  Two connections per origin did not help, because undici only opens the second when the
+  first has no free stream; separating the two kinds of request by Agent does.
+
 ## 2.2.7
 
 - **A claimed request no longer folds the server phase into `sendMs`.** The send phase was
