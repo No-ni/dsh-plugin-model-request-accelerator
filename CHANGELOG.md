@@ -4,6 +4,12 @@ Three-part versions. The panel's **检查更新** button compares the installed
 `package.json` with the one on `main`, so an entry here is worth a release only when
 something a user can see has changed.
 
+## 2.2.3
+
+- The manifest points `repository`, `bugs` and `homepage` at this repository, so
+  **检查更新** compares against this repository's `main` instead of the upstream
+  one.
+
 ## 2.2.2
 
 - **Fix: pre-transmission's held members always failed on a fresh connection.**
