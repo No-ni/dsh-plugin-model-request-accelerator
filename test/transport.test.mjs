@@ -422,3 +422,24 @@ test("does not retry a body that cannot be sent twice", async () => {
 	assert.equal(outcome.reason, "transport");
 	transport.dispose();
 });
+
+test('a held member opened without a protocol callback does not throw', async () => {
+	// Pre-transmission calls execute() with no onConnected: a member is opened before
+	// there is a measurement to report into, and its row's protocol is read back from
+	// the origin when the member is claimed. Requiring the callback here made every
+	// member opened on a fresh connection throw, after the prefix had already gone out.
+	const fake = fakePair();
+	const transport = createTransport({
+		load: () => ({
+			...fake.pair,
+			fetch: async (url, init) => {
+				diagnosticsChannel.channel('undici:client:connected').publish({ connectParams: { hostname: 'gw.example', port: '443', version: 'h2', protocol: 'https:' } });
+				return fake.pair.fetch(url, init);
+			}
+		})
+	});
+	const outcome = await transport.execute('https://gw.example/v1/chat/completions', { method: 'POST', body: '{}' }, { allowInsecure: false });
+	assert.equal(outcome.sent, true, 'the member is still sent');
+	assert.equal(fake.calls.length, 1);
+});
+

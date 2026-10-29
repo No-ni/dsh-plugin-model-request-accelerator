@@ -4,6 +4,18 @@ Three-part versions. The panel's **检查更新** button compares the installed
 `package.json` with the one on `main`, so an entry here is worth a release only when
 something a user can see has changed.
 
+## 2.2.2
+
+- **Fix: pre-transmission's held members always failed on a fresh connection.**
+  `lib/transport.js` called `options.onConnected` whenever the transport reported a
+  protocol, but the pre-transmission path (`lib/index.js`) never passes it — a member
+  is opened before there is a measurement to report into. Opening a member on a new
+  connection therefore threw `TypeError: options.onConnected is not a function` after
+  the prefix had already been written, and the whole upload was thrown away for a
+  plain resend. The callback is now optional; the protocol is still remembered and
+  read back through `protocolFor` when the member is claimed. Regression test in
+  `test/transport.test.mjs`.
+
 ## 2.2.0
 
 - **The README is now for using the plugin, and the depth moved into `docs/`.** It had
