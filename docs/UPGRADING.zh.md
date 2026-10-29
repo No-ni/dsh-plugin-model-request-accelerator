@@ -17,7 +17,7 @@
 或者直接重跑安装脚本，它做的是同一件事：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/HolynnChen/dsh-plugin-model-request-accelerator/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/No-ni/dsh-plugin-model-request-accelerator/main/install.sh | sh
 ```
 
 ## 从 1.7.x 升级

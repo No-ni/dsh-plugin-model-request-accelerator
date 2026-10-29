@@ -44,7 +44,7 @@ Measured on a real session: a **3.8 MB** request body became **1.46 MB**, with a
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/HolynnChen/dsh-plugin-model-request-accelerator/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/No-ni/dsh-plugin-model-request-accelerator/main/install.sh | sh
 ```
 
 That clones the plugin into `$DSH_HOME/profiles/web/plugins/model-request-accelerator` and registers it in the profile's `cordis.patch.yml`. It is safe to re-run — it fast-forwards an existing checkout, leaves an existing entry alone, and **never overwrites settings you have changed**. For another profile or DSH home:
@@ -61,7 +61,7 @@ Then **reload the browser tab** (the settings page is part of the page's module 
 **1. Clone it into your profile**
 
 ```bash
-git clone https://github.com/HolynnChen/dsh-plugin-model-request-accelerator.git \
+git clone https://github.com/No-ni/dsh-plugin-model-request-accelerator.git \
   "${DSH_HOME:-$HOME/.dsh}/profiles/web/plugins/model-request-accelerator"
 ```
 

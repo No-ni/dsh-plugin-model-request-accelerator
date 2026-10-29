@@ -1,7 +1,7 @@
 #!/bin/sh
 # Install dsh-plugin-model-request-accelerator into a DSH profile.
 #
-#   curl -fsSL https://raw.githubusercontent.com/HolynnChen/dsh-plugin-model-request-accelerator/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/No-ni/dsh-plugin-model-request-accelerator/main/install.sh | sh
 #
 # Clones the plugin next to the profile's other plugins and registers it in the
 # profile's patch layer. Safe to re-run: an existing checkout is fast-forwarded,
@@ -15,7 +15,7 @@
 
 set -eu
 
-REPO_URL="https://github.com/HolynnChen/dsh-plugin-model-request-accelerator.git"
+REPO_URL="https://github.com/No-ni/dsh-plugin-model-request-accelerator.git"
 PLUGIN_ID="model-request-accelerator"
 
 DSH_HOME="${DSH_HOME:-$HOME/.dsh}"

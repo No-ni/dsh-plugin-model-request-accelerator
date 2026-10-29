@@ -44,7 +44,7 @@
 ## 安装
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/HolynnChen/dsh-plugin-model-request-accelerator/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/No-ni/dsh-plugin-model-request-accelerator/main/install.sh | sh
 ```
 
 它会把插件克隆到 `$DSH_HOME/profiles/web/plugins/model-request-accelerator` 并注册进该 profile 的 `cordis.patch.yml`。**可以反复运行**——它会 fast-forward 已有 checkout、保留已注册的条目，并且**绝不覆盖你改过的设置**。换 profile 或换 DSH home：
@@ -61,7 +61,7 @@ DSH_HOME=~/.dsh DSH_PROFILE=web sh install.sh
 **1. 克隆进你的 profile**
 
 ```bash
-git clone https://github.com/HolynnChen/dsh-plugin-model-request-accelerator.git \
+git clone https://github.com/No-ni/dsh-plugin-model-request-accelerator.git \
   "${DSH_HOME:-$HOME/.dsh}/profiles/web/plugins/model-request-accelerator"
 ```
 

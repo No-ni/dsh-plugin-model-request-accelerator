@@ -17,7 +17,7 @@ The settings card shows the version with a button. **Opening the card checks by 
 Or just re-run the installer, which does the same pull:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/HolynnChen/dsh-plugin-model-request-accelerator/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/No-ni/dsh-plugin-model-request-accelerator/main/install.sh | sh
 ```
 
 ## Upgrading from 1.7.x
