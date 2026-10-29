@@ -808,17 +808,24 @@ test("holds the headings and every provider in one grid", async () => {
 	// change without the test losing the grid it is about.
 	const grid = collect(body, (node) => Array.isArray(node.children) && node.children.some((child) => child?.props?.key === "h-name"))[0];
 	assert.ok(grid !== undefined, "headings and rows share one grid");
-	assert.deepEqual(grid.children.slice(0, 5).map((cell) => cell.children[0]), ["提供方", "算法", "压缩", "HTTP/2", "预传输"], "the provider leads, then its algorithm and its three switches");
+	assert.deepEqual(grid.children.slice(0, 3).map((cell) => cell.children[0]), ["提供方", "算法", "压缩"], "the provider leads, then its algorithm and its compression switch");
+	assert.ok(grid.children.every((child) => child?.props?.key !== "h-http2" && child?.props?.key !== "h-prewarm"), "the two beta switches are not columns");
 	assert.ok(String(grid.props.style.gridTemplateColumns).includes("1fr"), "and the provider column takes the slack, so the table fills the panel");
 
 	// Each route contributes the same five cells, in the same order, after a group
 	// label that spans the grid (so it cannot disturb a column).
-	const cells = grid.children.slice(5).filter((child) => child.type !== "div");
+	const cells = grid.children.slice(3).filter((child) => child.type !== "div");
 	const routes = (await ctl.read()).routes;
-	assert.equal(cells.length, routes.length * 5, `five cells per route, grid held: ${JSON.stringify(grid.children.map((child) => child.props?.key ?? child.type))}`);
-	for (let index = 0; index < cells.length; index += 5) {
-		assert.deepEqual(cells.slice(index, index + 5).map((cell) => cell.type), ["span", "select", "input", "input", "input"], "identity, algorithm, compress, HTTP/2, pre-transmit");
+	assert.equal(cells.length, routes.length * 3, `three cells per route, grid held: ${JSON.stringify(grid.children.map((child) => child.props?.key ?? child.type))}`);
+	for (let index = 0; index < cells.length; index += 3) {
+		assert.deepEqual(cells.slice(index, index + 3).map((cell) => cell.type), ["span", "select", "input"], "identity, algorithm, compress");
 	}
+
+	// The page no longer offers the switches; it says where they live instead.
+	assert.ok(
+		collect(body, (node) => typeof node.children?.[0] === "string" && node.children[0].includes("只能在配置文件里开启")).length > 0,
+		"the page points at the config file for the beta switches",
+	);
 });
 
 test("shows the ledger's size, and clears it only after a confirmation", async () => {
@@ -908,7 +915,7 @@ test("shows the ledger's size, and clears it only after a confirmation", async (
 	}
 });
 
-test("keeps the plugin-level controls next to their labels", async () => {
+test("keeps the beta switches out of the page", async () => {
 	const { exports } = loadBundle();
 	const harness = createClientContext();
 	exports.apply(harness.ctx);
@@ -929,14 +936,10 @@ test("keeps the plugin-level controls next to their labels", async () => {
 		return found;
 	};
 
-	const pool = collect(body, (node) => node.type === "input" && node.props.type === "number" && typeof node.props.title === "string" && node.props.title.includes("预发请求"))[0];
-	assert.ok(pool !== undefined, "the pool field is offered");
-	assert.equal(pool.props.style.marginLeft, undefined, "no control is pushed to the far edge");
-	assert.equal(pool.props.style.justifySelf, undefined);
-
-	const line = collect(body, (node) => Array.isArray(node.children) && node.children.includes(pool))[0];
-	assert.ok(line !== undefined, "the field shares a line with its label");
-	assert.ok(line.children.some((child) => child !== null && typeof child === "object" && child.children?.[0] === "预传输池大小"), "and the label is right beside it");
+	const numberField = collect(body, (node) => node.type === "input" && node.props.type === "number")[0];
+	assert.equal(numberField, undefined, "the pool field is config-only now");
+	const note = collect(body, (node) => typeof node.children?.[0] === "string" && node.children[0].includes("prewarmPoolSize"))[0];
+	assert.ok(note !== undefined, "and the page says where the pool size and the switches live");
 });
 
 test("offers the algorithm per provider, and writes it to that route", async () => {

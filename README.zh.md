@@ -109,8 +109,7 @@ git clone https://github.com/No-ni/dsh-plugin-model-request-accelerator.git \
 
 - **开关** —— 是否压缩该提供方的请求。
 - **算法** —— `brotli`（默认）或 `gzip`。
-- **HTTP/2** —— 对开启了预传输的路由默认打开，其余默认关闭。
-- **预传输** —— 默认关闭。
+- **HTTP/2** 与 **预传输** —— beta 功能，不在这个页面上。两者都会在链路上提前投递数据，因此在配置文件里设置（`providers.<id>.http2`、`providers.<id>.prewarm`，以及可选的 `prewarmPoolSize`），重启后生效。
 
 共用同一个 endpoint 的多个路由是**各自独立**配置的，因为每次模型调用会被归属到发出它的那个提供方；只有在请求完全无法归属时才会退回按 endpoint 判断。
 

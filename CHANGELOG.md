@@ -4,6 +4,16 @@ Three-part versions. The panel's **检查更新** button compares the installed
 `package.json` with the one on `main`, so an entry here is worth a release only when
 something a user can see has changed.
 
+## 2.3.0
+
+- **Pre-transmission and HTTP/2 left the settings page; both are beta now.** They put
+  speculative bytes on the live uplink, and on a paced gateway that is not free: a
+  conversation holding ~2.6 MB of half-written bodies pushed a real request 113 s behind
+  them while the gateway itself answered in 3 s. They are turned on in the config file
+  (`providers.<id>.prewarm` / `http2`, optional `prewarmPoolSize`) and the page prints a
+  note where the switches used to be. The page never rewrites those keys, so anything
+  already on in the config stays on.
+
 ## 2.2.8
 
 - **Held members get their own connection pool.** A request reached the gateway 61 s

@@ -118,8 +118,7 @@ Everything is on one page: **Settings → 模型请求加速**, beside General, 
 
 - **Toggle** — compress this provider's requests.
 - **Algorithm** — `brotli` (default) or `gzip`.
-- **HTTP/2** — on by default for a route that pre-transmits, off until asked for otherwise.
-- **Pre-transmission** — off by default.
+- **HTTP/2** and **Pre-transmission** — beta, and not on this page. Both put speculative bytes on the live uplink, so they are set in the config file instead (`providers.<id>.http2`, `providers.<id>.prewarm`, optional `prewarmPoolSize`) and take effect on restart.
 
 Routes that share one endpoint are configured **independently**, because every model call is attributed to the provider that issued it. The endpoint is only consulted when a request cannot be attributed at all.
 

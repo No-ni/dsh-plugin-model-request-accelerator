@@ -23,14 +23,14 @@ Every setting lives on one page: **Settings → 模型请求加速**. This docum
 
 ## Per-provider settings
 
-These are the columns of the page's table. Routes that share one endpoint are **grouped but configured independently**: each model call is attributed to the provider that issued it, and that provider's own switches decide. The endpoint is only consulted when a request cannot be attributed at all.
+These are the keys of the page's table. **HTTP/2 and pre-transmission are no longer columns**: both are beta features that put speculative bytes on the live uplink, so they are set in the config file and the page prints a note where the switches used to be. Routes that share one endpoint are **grouped but configured independently**: each model call is attributed to the provider that issued it, and that provider's own switches decide. The endpoint is only consulted when a request cannot be attributed at all.
 
 | Column | Key | Default | What it does |
 | --- | --- | --- | --- |
 | Toggle | `providers.<name>.enabled` | `false` | Compress this provider's model requests. |
 | Algorithm | `providers.<name>.encoding` | inherits `encoding` | `brotli` or `gzip`. |
-| HTTP/2 | `providers.<name>.http2` | on when the route pre-transmits | Offer HTTP/2 to this provider. See [HTTP/2](#http2). |
-| Pre-transmission | `providers.<name>.prewarm` | `false` | Put this conversation's shared history on the wire early. See [Pre-transmission](#pre-transmission). |
+| HTTP/2 (**beta**, config file only) | `providers.<name>.http2` | on when the route pre-transmits | Offer HTTP/2 to this provider. See [HTTP/2](#http2). |
+| Pre-transmission (**beta**, config file only) | `providers.<name>.prewarm` | `false` | Put this conversation's shared history on the wire early. See [Pre-transmission](#pre-transmission). |
 | Minimum body size | `providers.<name>.minBytes` | `1024` | Not in the page; set it in the row's `config`. Requests below it are sent as-is, and compression is skipped whenever it would not actually make the body smaller. |
 
 ## Compression
